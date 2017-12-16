@@ -12,8 +12,10 @@ console.time('create-listing');
   // make 1mm objects
   for (let i = 0; i < 1000000; i++) {
 
-    let user_uuid = getRandomInt( 1,10000 );
-    let listing_uuid = getRandomInt( 1,10000 );
+    let user_uuid = getRandomInt( 1, 10000 );
+    let listing_uuid = getRandomInt( 1, 10000 );
+    let booking_uuid = getRandomInt( 1, 10000 );
+
     let PA_rating = getRandomInt( 0, 6 );
     let booking_start_date = formatDateToString( randomDate( new Date('1/1/17'), new Date() ) );
     let booking_length = getRandomInt( 1, 32 );
@@ -23,9 +25,11 @@ console.time('create-listing');
 
     // let number_of_days = daysBetween(booking_start_date, booking_end_date);
 
+
     let obj = {
       user_uuid: user_uuid,
       listing_uuid: listing_uuid,
+      booking_uuid: booking_uuid,
       PA_rating: PA_rating,
       booking_start_date: booking_start_date,
       booking_end_date: booking_end_date,
@@ -93,20 +97,3 @@ var daysBetween = function( date1, date2 ) {
   // Convert back to days and return
   return Math.round(difference_ms/one_day);
 }
-
-
-/*
-when a creating a record, this data will need to be created from the object thats received from the client
-booking_uuid needs to be created
-number_of_days needs to be created
-
-let obj = {
-  user_uuid: user_uuid,
-  listing_uuid: listing_uuid,
-  PA_rating: PA_rating,
-  booking_start_date: booking_start_date,
-  booking_end_date: booking_end_date,
-  booking_cost_per_night: booking_cost_per_night,
-  total_cost: total_cost
-}
-*/
