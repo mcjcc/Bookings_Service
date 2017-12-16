@@ -36,7 +36,7 @@ console.time('create-listing');
       booking_cost_per_night: booking_cost_per_night,
       booking_length: booking_length,
       booking_total_cost: booking_total_cost
-    }
+    };
 
     let string = JSON.stringify(obj) + '\n';
     wstream.write(string);
@@ -83,7 +83,7 @@ function formatDateToString(date) {
 }
 
 // takes two dates and calculates the amount of days between them
-var daysBetween = function( date1, date2 ) {
+function daysBetween(date1, date2) {
   //Get 1 day in milliseconds
   var one_day=1000*60*60*24;
 
