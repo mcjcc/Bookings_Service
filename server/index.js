@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const cassandraDB = require('../db');
+const db = require('../db');
 
 let app = express();
 
@@ -12,11 +12,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 
-app.get('/', (req, res) => {
-  res.end('hello world');
+// get availability for a specific listing
+app.get('/bookings/availability/:listing_id', (req, res) => {
+
 });
 
 
-app.post('/', (req, res) => {
+// create a booking for a specific listing
+app.post('/bookings/book/:listing_id', (req, res) => {
 
 });
