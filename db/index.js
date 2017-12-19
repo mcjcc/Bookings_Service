@@ -1,12 +1,116 @@
-// helper function that checks if a time slot has already been booked
+const pg = require('pg');
+const Sequelize = require('sequelize');
+
+const sequelize = new Sequelize('bookings_db', 'johnnychen', '', {
+  host: 'localhost',
+  dialect: 'postgres',
+
+  pool: {
+    max: 5,
+    min: 0,
+    acquire: 30000,
+    idle: 10000
+  },
+
+  // http://docs.sequelizejs.com/manual/tutorial/querying.html#operators
+  operatorsAliases: false
+});
+
+
+sequelize.authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+});
+
+// ================================================
+// set up db if not exists
+// ================================================
+
+
+
+// ================================================
+// set up db schema
+// ================================================
+/*
+const Listing = sequelize.define('listing', {
+    id: {type: Sequelize.INTEGER, unique: true, primaryKey: true, autoIncrement: true},
+    listing_uuid: {type: Sequelize.UUID, unique: true},
+    user_uuid: Sequelize.UUID,  // belongs to a user
+  },
+  {
+    timestamps: false,
+    indexes: [
+      {
+        unique: true,
+        fields: ['listing_uuid']
+      }
+    ]
+  }
+);
+*/
+
+const Booking = sequelize.define('booking', {
+    id: {type: Sequelize.INTEGER, unique: true, primaryKey: true, autoIncrement: true},
+    booking_uuid: {type: Sequelize.UUID, unique: true},
+    listing_uuid: Sequelize.UUID,  // belongs to a listing
+    user_uuid: Sequelize.UUID,     // belongs to a user
+    PA_rating: Sequelize.INTEGER,
+    booking_start_date: Sequelize.DATE,
+    booking_end_date: Sequelize.DATE,
+    booking_length: Sequelize.INTEGER,
+    booking_cost_per_night: Sequelize.INTEGER,
+    booking_total_cost: Sequelize.INTEGER,
+    booking_date: Sequelize.DATE
+  },
+  {
+    timestamps: false,
+    indexes: [
+      {
+        unique: true,
+        fields: ['booking_uuid', 'listing_uuid', 'PA_rating']
+      }
+    ]
+  }
+);
+
+/*
+const User = sequelize.define('user', {
+    id: {type: Sequelize.INTEGER, unique: true, primaryKey: true, autoIncrement: true},
+    user_uuid: {type: Sequelize.UUID, unique: true}
+  },
+  {
+    timestamps: false,
+    indexes: [
+      {
+        unique: true,
+        fields: ['user_uuid']
+      }
+    ]
+  }
+);
+*/
+
+sequelize.sync();
+
+
+
+// ================================================
+// OLD CASSANDRA STUFF
+// ================================================
+/*
 const cassandra = require('cassandra-driver');
 
 // const client = new cassandra.Client({ contactPoints: ['h1', 'h2'], keyspace: 'ks1' });
 const client = new cassandra.Client({ contactPoints: ['127.0.0.1']});
 client.connect()
   .then(function() {
+    // const query = "CREATE KEYSPACE IF NOT EXISTS bookings_db WITH replication =" +
+    //               "{ 'class' : 'SimpleStrategy', 'replication_factor': '3'}";
     const query = "CREATE KEYSPACE IF NOT EXISTS bookings_db WITH replication =" +
-                  "{ 'class' : 'SimpleStrategy', 'replication_factor': '3'}";
+                                "{ 'class' : 'SimpleStrategy', 'replication_factor': '10'}";
     console.log('Keyspace: bookings_db created!');
     return client.execute(query);
   })
@@ -32,6 +136,7 @@ client.connect()
     return client.shutdown();
   });
 
+*/
 /*
 
 CREATE KEYSPACE IF NOT EXISTS bookings_db WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor': 3};
