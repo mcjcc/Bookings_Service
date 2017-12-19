@@ -10,16 +10,17 @@ cqsl:$ copy bookings_db.bookings_table (listing_uuid, bookings) to 'text.csv';  
 
 const fs = require('fs');
 const uuidv1 = require('uuid/v1');
+const path = require('path');
 
-var outputFile = './bookings-csv-data.csv';
+let outputFile = path.join(__dirname, './bookings-csv-data.csv');
 
 // es6 styled IIFE
 console.time('create-listing');
 {
   let wstream = fs.createWriteStream(outputFile);
 
-  // make 1mm objects
-  let records_amount = 1000000;
+  // make a lot of records
+  let records_amount = 10000;
   for (let i = 0; i < records_amount; i++) {
     let listing_uuid = uuidv1();
 

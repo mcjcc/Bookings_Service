@@ -35,8 +35,9 @@ ex:
 
 const fs = require('fs');
 const uuidv1 = require('uuid/v1');
+const path = require('path');
 
-var outputFile = './bookings-json-data.json';
+let outputFile = path.join(__dirname, './bookings-json-data.json');
 
 // es6 styled IIFE
 console.time('create-listing');
