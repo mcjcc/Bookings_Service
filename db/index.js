@@ -1,5 +1,6 @@
 const pg = require('pg');
 const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 const sequelize = new Sequelize('bookings_db', 'johnnychen', '', {
   host: 'localhost',
@@ -58,8 +59,8 @@ const Booking = sequelize.define('booking', {
     listing_uuid: Sequelize.UUID,  // belongs to a listing
     user_uuid: Sequelize.UUID,     // belongs to a user
     pa_rating: Sequelize.INTEGER,
-    booking_start_date: Sequelize.DATE,
-    booking_end_date: Sequelize.DATE,
+    booking_start_date: Sequelize.DATEONLY,
+    booking_end_date: Sequelize.DATEONLY,
     booking_length: Sequelize.INTEGER,
     booking_cost_per_night: Sequelize.INTEGER,
     booking_total_cost: Sequelize.INTEGER,
@@ -97,6 +98,7 @@ sequelize.sync();
 
 
 module.exports.Booking = Booking;
+module.exports.Op = Op;
 
 // ================================================
 // OLD CASSANDRA STUFF
