@@ -1,12 +1,15 @@
 /*
 This file when run will generate booking records
 
-id,booking_uuid,listing_uuid,user_uuid,PA_rating,booking_start_date,booking_end_date,booking_length,booking_cost_per_night,booking_total_cost,booking_date
+booking_uuid,listing_uuid,user_uuid,pa_rating,booking_start_date,booking_end_date,booking_length,booking_cost_per_night,booking_total_cost,booking_date
+
+COPY bookings (booking_uuid,listing_uuid,user_uuid,pa_rating,booking_start_date,booking_end_date,booking_length,booking_cost_per_night,booking_total_cost,booking_date) FROM '/Users/johnnychen/Projects/HR/hrsf84-thesis/data/postgres/bookings-postgres-csv-data.csv' DELIMITER ',' CSV;
 */
 
 const fs = require('fs');
 const Chance = require('chance');
 const path = require('path');
+const moment = require('moment');
 
 let chance = new Chance();
 
@@ -16,8 +19,6 @@ let outputFile = path.join(__dirname, './bookings-postgres-csv-data.csv');
 console.time('create-listing');
 {
   let wstream = fs.createWriteStream(outputFile);
-
-  // generate a list of
 
   // make a lot of records
   let records_amount = 10000000;
@@ -54,7 +55,6 @@ console.time('create-listing');
 
     let listing = listings_array[getRandomInt(0, amount_of_listings)];
 
-    let id = i+1;
     let booking_uuid = chance.guid();
     let listing_uuid = listing[0];
     let user_uuid = users_array[getRandomInt(0, amount_of_users)];
@@ -66,7 +66,7 @@ console.time('create-listing');
     let booking_total_cost = totalCost( booking_length, booking_cost_per_night );
     let booking_date = formatDateToString( randomDate( new Date('1/1/2017'), new Date('12/31/2017') ) );
 
-    record_str = `${id},${booking_uuid},${listing_uuid},${user_uuid},${PA_rating},'${booking_start_date}','${booking_end_date}',${booking_length},${booking_cost_per_night},${booking_total_cost},'${booking_date}'\r\n`;
+    record_str = `${booking_uuid},${listing_uuid},${user_uuid},${PA_rating},'${booking_start_date}','${booking_end_date}',${booking_length},${booking_cost_per_night},${booking_total_cost},'${booking_date}'\r\n`;
     wstream.write(record_str);
   }
 
@@ -103,11 +103,8 @@ function addDaysToDate(date, days) {
 
 // takes a date object and formats to a string in this form 'YYYY-MM-DD'
 function formatDateToString(date) {
-  let year = date.getFullYear();
-  let month = date.getMonth() + 1;
-  let day = date.getDate();
-
-  return `${year}-${month}-${day}`;
+  let formatted_date = moment(date).format('YYYY-MM-DD');
+  return formatted_date;
 }
 
 // takes two dates and calculates the amount of days between them
