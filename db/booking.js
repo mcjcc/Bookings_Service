@@ -21,8 +21,9 @@ const get_availability = (listing_uuid) => {
     }
   })
   .then((results) => {
-    let availability_obj = _createAvailabilityObject();
+    let availability_obj = _createAvailabilityObject(listing_uuid);
     // construct an array of booked dates
+
     results.forEach((result) => {
       // find the start date of the booking and then loop through teh booking length and switch the values in the corresponding availability_obj to false
 
@@ -30,7 +31,7 @@ const get_availability = (listing_uuid) => {
 
       for (let i = 0; i < result.booking_length; i++) {
         let date_key = moment(booking_start_date).add(i, 'days').format('YYYY-MM-DD');
-        availability_obj[date_key] = false;
+        availability_obj['availability_dates'][date_key] = false;
       }
 
     });
@@ -73,15 +74,15 @@ function _formatDateToString(date) {
 }
 
 
-function _createAvailabilityObject() {
+function _createAvailabilityObject(listing_uuid) {
   // creates an object with current date up to 730 days as keys with values that default to true
-  let availability_obj = {};
+  let availability_obj = {listing_uuid: listing_uuid, availability_dates:{}};
   let first_date = moment().format('YYYY-MM-DD');
   let days_in_year = 365;
 
   for (let i = 0; i < days_in_year * 2; i++) {
     let date_key = moment(first_date).add(i, 'days').format('YYYY-MM-DD');
-    availability_obj[date_key] = true;
+    availability_obj['availability_dates'][date_key] = true;
   }
   return availability_obj;
 }
