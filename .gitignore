@@ -5,6 +5,8 @@ config/staging.json
 config/test.json
 data/*/*.json
 data/*/*.csv
+config/*
+
 
 # OS X
 .DS_Store
