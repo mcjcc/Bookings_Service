@@ -26,7 +26,7 @@ sequelize.authenticate()
 });
 
 // ================================================
-// set up db if not exists
+// TODO: set up db if not exists
 // ================================================
 
 
@@ -57,7 +57,7 @@ const Booking = sequelize.define('booking', {
     booking_uuid: {type: Sequelize.UUID, unique: true},
     listing_uuid: Sequelize.UUID,  // belongs to a listing
     user_uuid: Sequelize.UUID,     // belongs to a user
-    PA_rating: Sequelize.INTEGER,
+    pa_rating: Sequelize.INTEGER,
     booking_start_date: Sequelize.DATE,
     booking_end_date: Sequelize.DATE,
     booking_length: Sequelize.INTEGER,
@@ -70,7 +70,7 @@ const Booking = sequelize.define('booking', {
     indexes: [
       {
         unique: true,
-        fields: ['booking_uuid', 'listing_uuid', 'PA_rating']
+        fields: ['booking_uuid', 'listing_uuid', 'pa_rating']
       }
     ]
   }
@@ -96,6 +96,7 @@ const User = sequelize.define('user', {
 sequelize.sync();
 
 
+module.exports.Booking = Booking;
 
 // ================================================
 // OLD CASSANDRA STUFF
