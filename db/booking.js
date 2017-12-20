@@ -5,9 +5,48 @@ const moment = require('moment');
 
 // id,booking_uuid,listing_uuid,user_uuid,PA_rating,booking_start_date,booking_end_date,booking_length,booking_cost_per_night,booking_total_cost,booking_date
 
-const create_booking = function(listing_uuid, obj) {
+const get_availability = (listing_uuid) => {
+  // inputs are a listing_uuid and a month in integer format
+
+  // turns today's date into a string with a form of 'YYYY-MM-DD'
+  var todays_date = _formatDateToString(new Date());
+
+  return db.Booking.findAll({
+    attributes: ['booking_start_date', 'booking_end_date', 'booking_length'],
+    where: {
+      listing_uuid: listing_uuid,
+      booking_end_date: {
+        [db.Op.gte]: todays_date
+      }
+    }
+  })
+  .then((results) => {
+    let availability_obj = _createAvailabilityObject();
+    // construct an array of booked dates
+    results.forEach((result) => {
+      // find the start date of the booking and then loop through teh booking length and switch the values in the corresponding availability_obj to false
+
+      let booking_start_date = _formatDateToString(result.booking_start_date);
+
+      for (let i = 0; i < result.booking_length; i++) {
+        let date_key = moment(booking_start_date).add(i, 'days').format('YYYY-MM-DD');
+        availability_obj[date_key] = false;
+      }
+
+    });
+    return availability_obj;
+  })
+  .catch((e) => {
+    console.log(e); // "oh, no!"
+  });
+
+
+
+}
+
+const create_booking = (listing_uuid, obj) => {
   let booking_uuid = uuidv4();
-  db.Booking.create({
+  return db.Booking.create({
     booking_uuid: booking_uuid,
     listing_uuid: listing_uuid,
     user_uuid: obj.user_uuid,
@@ -25,7 +64,6 @@ const create_booking = function(listing_uuid, obj) {
   .catch((e) => {
     console.log(e); // "oh, no!"
   });
-
 }
 
 
@@ -34,7 +72,22 @@ function _formatDateToString(date) {
   return formatted_date;
 }
 
+
+function _createAvailabilityObject() {
+  // creates an object with current date up to 730 days as keys with values that default to true
+  let availability_obj = {};
+  let first_date = moment().format('YYYY-MM-DD');
+  let days_in_year = 365;
+
+  for (let i = 0; i < days_in_year * 2; i++) {
+    let date_key = moment(first_date).add(i, 'days').format('YYYY-MM-DD');
+    availability_obj[date_key] = true;
+  }
+  return availability_obj;
+}
+
 module.exports.create_booking = create_booking;
+module.exports.get_availability = get_availability;
 
 
 /*
