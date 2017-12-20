@@ -71,7 +71,7 @@ const Booking = sequelize.define('booking', {
     indexes: [
       {
         unique: true,
-        fields: ['booking_uuid', 'listing_uuid', 'pa_rating']
+        fields: ['booking_uuid', 'listing_uuid', 'pa_rating', 'booking_start_date', 'booking_end_date', 'booking_length']
       }
     ]
   }
