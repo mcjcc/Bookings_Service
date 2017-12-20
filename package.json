@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/mcjcc/hrsf84-thesis#readme",
   "dependencies": {
+    "aws-sdk": "^2.172.0",
     "cassandra-driver": "^3.3.0",
     "express": "^4.16.2",
     "fs": "0.0.1-security",
