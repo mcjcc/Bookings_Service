@@ -1,7 +1,15 @@
+const apm = require('elastic-apm-node').start({
+  // Set required app name (allowed characters: a-z, A-Z, 0-9, -, _, and space)
+  appName: 'Thesis Bookings Service Logger',
+  serverUrl: 'http://localhost:8200'
+});
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const aws = require('aws-sdk');
 const path = require('path');
+
+const Booking = require('../db/booking');
 
 // Load your AWS credentials and try to instantiate the object.
 let aws_config_path = path.join(__dirname, '../config/AWS.json');
@@ -10,15 +18,17 @@ aws.config.loadFromPath(aws_config_path);
 
 let sqs = new aws.SQS();
 
-const Booking = require('../db/booking');
-
 let app = express();
 
 let port = process.env.PORT || 3000;
 app.listen(port);
 
+// Your regular middleware and router...
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+
+// Add the Elastic APM middleware after your regular middleware
+app.use(apm.middleware.express());
 
 app.get('/', (req, res) => {
   res.send('Thesis Bookings API');
@@ -39,7 +49,6 @@ app.get('/bookings/availability/:listing_uuid', (req, res) => {
     });
 
 });
-
 
 // create a booking for a specific listing
 app.post('/bookings/book/:listing_uuid', (req, res) => {
