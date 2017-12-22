@@ -27,9 +27,10 @@ const get_availability = (listing_uuid) => {
     results.forEach((result) => {
       // find the start date of the booking and then loop through teh booking length and switch the values in the corresponding availability_obj to false
 
-      let booking_start_date = _formatDateToString(result.booking_start_date);
+      let booking_start_date = result.booking_start_date;
+      let booking_length = result.booking_length;
 
-      for (let i = 0; i < result.booking_length; i++) {
+      for (let i = 0; i < booking_length; i++) {
         let date_key = moment(booking_start_date).add(i, 'days').format('YYYY-MM-DD');
         availability_obj['availability_dates'][date_key] = false;
       }

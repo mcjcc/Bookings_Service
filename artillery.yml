@@ -1,0 +1,17 @@
+config:
+  target: 'http://localhost:3000'
+  phases:
+    - duration: 30
+      arrivalRate: 1
+      rampTo: 1
+      name: "Warm Up Application"
+    - duration: 300
+      arrivalRate: 1
+      name: "Max Load"
+  defaults:
+    headers:
+scenarios:
+  - flow:
+    - get:
+        url: "/bookings/availability/9c1cccfb-80c4-557b-9a93-53529858acf5"
+        # url: "/"
