@@ -1,10 +1,12 @@
 {
-  "name": "Bookings Service",
+  "name": "bookings_service",
   "version": "1.0.0",
   "description": "A Bookings Microservice",
   "main": "index.js",
   "scripts": {
-    "test": "test test command"
+    "test": "test test command",
+    "server-dev": "nodemon ./server/index.js",
+    "start": "npm run server-dev"
   },
   "repository": {
     "type": "git",
