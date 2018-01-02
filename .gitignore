@@ -6,6 +6,7 @@ config/test.json
 data/*/*.json
 data/*/*.csv
 config/*
+!config/sample-config.js
 
 
 # OS X
