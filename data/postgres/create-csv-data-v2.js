@@ -18,34 +18,52 @@ const moment = require('moment');
 
 let chance = new Chance();
 
-let outputFile = path.join(__dirname, './bookings-postgres-csv-data.csv');
+let bookingsOutputFile = path.join(__dirname, './v2-bookings-postgres-csv-data.csv');
+
+// file to load for the calendar tables without any bookings yet
+let listingsOutputFile = path.join(__dirname, './v2-listings-postgres-csv-data.csv');
+let availabilityFor2018OutputFile = path.join(__dirname, './v2-availability-for-2018-postgres-csv-data.csv');
 
 // es6 styled IIFE
-console.time('create-listing');
+console.time('create-bookings-csv');
+console.time('create-availability-for-2018-csv');
+console.time('create-listings-csv');
 {
-  let wstream = fs.createWriteStream(outputFile);
+  let bookings_wstream = fs.createWriteStream(bookingsOutputFile);
+  let listings_wstream = fs.createWriteStream(listingsOutputFile);
+  let availability_for_2018_wstream = fs.createWriteStream(availabilityFor2018OutputFile);
+
   let one_million = 1000000;
   let one_thousand = 1000;
+  let ten = 10;
 
   // generate 1 mil listings_uuid
   let listings_amount = one_million;
   let listings_array = [];
   for (let i = 0; i < listings_amount; i++) {
-    if (i % 100000 === 0) {
+    if (i % 1000 === 0) {
 		  // console log every 100k to show progress
-      console.log('Another 100k listings generated! ', i);
+      console.log('Another 1k listings generated! ', i);
     }
     // [listing_uuid, pa_rating]
-    listings_array.push([chance.guid(), getRandomInt(0, 6)]);
+    let listing_uuid = chance.guid();
+    let pa_rating = getRandomInt(0,6);
+    listings_array.push([listing_uuid, pa_rating]);
+    let listing_string = `${listing_uuid}\r\n`;
+    listings_wstream.write(listing_string);
   }
+
+  listings_wstream.end(() => {
+    console.log('Bookings data has been created!');
+  });
 
   // generate 1mil user_uuids
   let users_amount = one_million;
   let users_array = [];
   for (let i = 0; i < users_amount; i++) {
-    if (i % 100000 === 0) {
+    if (i % 1000 === 0) {
 		  // console log every 100k to show progress
-      console.log('Another 100k users generated! ', i);
+      console.log('Another 1k users generated! ', i);
     }
       users_array.push(chance.guid());
   }
@@ -59,11 +77,10 @@ console.time('create-listing');
       console.log('Amount of bookings record generated! ', i * number_of_bookings_per_listing);
     }
 
+    bookings_array = [];
+
     for (let j = 0; j < number_of_bookings_per_listing; j++) {
-      let record_str = '';
-
       let listing = listings_array[i];
-
       let booking_uuid = chance.guid();
       let listing_uuid = listing[0];
       let user_uuid = users_array[getRandomInt(0, users_amount)];
@@ -75,15 +92,45 @@ console.time('create-listing');
       let booking_total_cost = totalCost( booking_length, booking_cost_per_night );
       let booking_date = formatDateToString( subtractDaysToDate( booking_start_date, booking_length ) );
 
-      record_str = `${booking_uuid},${listing_uuid},${user_uuid},${PA_rating},'${booking_start_date}','${booking_end_date}',${booking_length},${booking_cost_per_night},${booking_total_cost},'${booking_date}'\r\n`;
-      wstream.write(record_str);
+      bookings_array.push({
+        booking_uuid: booking_uuid,
+        booking_start_date: booking_start_date,
+        booking_length: booking_length
+      });
+
+      let record_str = `${booking_uuid},${listing_uuid},${user_uuid},${PA_rating},'${booking_start_date}','${booking_end_date}',${booking_length},${booking_cost_per_night},${booking_total_cost},'${booking_date}'\r\n`;
+      bookings_wstream.write(record_str);
+
+    } // end of bookings for loop
+
+    // create an array of 366 spaces with index 0 being the listing_uuid
+    let availability_array = new Array(366);
+    let listing = listings_array[i];
+    let listing_uuid = listing[0];
+    availability_array[availability_array.length-1] = listing_uuid;
+
+    for (let k = 0; k < bookings_array.length; k++) {
+      let booking_uuid = bookings_array[k].booking_uuid;
+      let booking_start_date = bookings_array[k].booking_start_date;
+      let index = daysBetween(new Date('2018-01-01'), new Date(booking_start_date)) + 1;
+      let booking_length = bookings_array[k].booking_length;
+      for (let l = index - 1; l <= index + booking_length; l++) {
+        // console.log(l);
+        availability_array[l] = booking_uuid;
+      }
     }
+    let availability_str = availability_array.join(',')+'\r\n';
+    availability_for_2018_wstream.write(availability_str);
 
   } // for listings_array loop
 
-  wstream.end(() => {
+  bookings_wstream.end(() => {
     console.log('Bookings data has been created!');
-    console.timeEnd('create-listing');
+    console.timeEnd('create-bookings-csv');
+  });
+  availability_for_2018_wstream.end(() => {
+    console.log('Availabilty for 2018 data has been created!');
+    console.time('create-availability-for-2018-csv');
   });
 }
 
