@@ -1,0 +1,21 @@
+version: '3.3'
+
+services:
+  db:
+    image: postgres
+    build: ./docker/db/Dockerfile
+    volumes:
+      - db_data:/usr/local/var/postgres/data
+    restart: always
+    environment:
+      POSTGRES_DATABASE: bookings_db
+      POSTGRES_DATABASE_USER: johnnychen
+  web:
+    build: ./docker/server/Dockerfile
+    command: npm start
+    ports:
+     - "5000:5000"
+    depends_on:
+      - db
+volumes:
+  db_data:
