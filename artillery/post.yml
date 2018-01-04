@@ -1,0 +1,39 @@
+config:
+  target: 'http://localhost:3000'
+  phases:
+    - duration: 1
+      arrivalRate: 1
+      rampTo: 1
+      name: "Warm Up Application"
+    - duration: 30
+      arrivalRate: 50
+      name: "Max Load"
+  processor: "./generate-random-bookings.js"
+  defaults:
+    headers:
+scenarios:
+  - name: "Create a booking for a listing"
+    flow:
+    - function: "generateRandomBookings"
+    - post:
+        url: "/bookings/book/{{ listing_uuid }}"
+        json:
+          listing_uuid: "4d85a6cb-856c-53fb-a53b-33d0d679f094"
+          user_uuid: "b8383aef-327a-5096-85e4-2750179969cd"
+          pa_rating: "4"
+          booking_start_date: "2019-10-20"
+          booking_end_date: "2019-10-25"
+          booking_cost_per_night: "100"
+          booking_length: "5"
+          booking_total_cost: "500"
+          booking_date: "2019-09-05"
+          #
+          # listing_uuid: "{{ listing_uuid }}"
+          # user_uuid: "{{ user_uuid }}"
+          # pa_rating: "{{ pa_rating }}"
+          # booking_start_date: "{{ booking_start_date }}"
+          # booking_end_date: "{{ booking_end_date }}"
+          # booking_cost_per_night: "{{ booking_cost_per_night }}"
+          # booking_length: "{{ booking_length }}"
+          # booking_total_cost: "{{ booking_total_cost }}"
+          # booking_date: "{{ booking_date }}"

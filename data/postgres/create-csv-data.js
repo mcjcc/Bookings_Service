@@ -4,7 +4,12 @@ This file when run will generate booking records
 booking_uuid,listing_uuid,user_uuid,pa_rating,booking_start_date,booking_end_date,booking_length,booking_cost_per_night,booking_total_cost,booking_date
 
 COPY bookings (booking_uuid,listing_uuid,user_uuid,pa_rating,booking_start_date,booking_end_date,booking_length,booking_cost_per_night,booking_total_cost,booking_date) FROM '/Users/johnnychen/Projects/HR/hrsf84-thesis/data/postgres/bookings-postgres-csv-data.csv' DELIMITER ',' CSV;
+
+// to generate fake data
+node --max_old_space_size=50000 ./create-csv-data.js
 */
+
+
 
 const fs = require('fs');
 const Chance = require('chance');
@@ -28,6 +33,7 @@ console.time('create-listing');
 		  // console log every 100k to show progress
       console.log('Another 100k listings generated! ', i);
     }
+    // [listing_uuid, pa_rating]
     listings_array.push([chance.guid(), getRandomInt(0, 6)]);
   }
 

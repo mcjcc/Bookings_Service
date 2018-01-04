@@ -5,3 +5,8 @@ curl -X POST -H "Content-type: application/json" -d '{"listing_uuid":"81ac21ef-f
 
 // get availability for a specific listing
 curl -X GET http://localhost:3000/bookings/availability/9c1cccfb-80c4-557b-9a93-53529858acf5
+curl -X GET http://localhost:3000/bookings/availability/ff0c379a-9a04-533b-997b-5ab8595410c2
+curl -X GET http://localhost:3000/bookings/availability/77d987ff-e24b-5e42-b877-d4dba541430f
+curl -X GET http://localhost:3000/bookings/availability/81ac21ef-ff94-45d6-82ce-dc3d37f9ccec
+
+^ takes about 4 seconds to respond
