@@ -25,6 +25,7 @@
     "express": "^4.16.2",
     "fs": "0.0.1-security",
     "moment": "^2.20.1",
+    "newrelic": "^2.5.0",
     "pg": "^6.4.2",
     "pg-hstore": "^2.3.2",
     "redis": "^2.8.0",
