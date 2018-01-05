@@ -1,9 +1,10 @@
-const apm = require('elastic-apm-node').start({
-  // Set required app name (allowed characters: a-z, A-Z, 0-9, -, _, and space)
-  appName: 'Thesis Bookings Service Logger',
-  serverUrl: 'http://localhost:8200'
-});
+// const apm = require('elastic-apm-node').start({
+//   // Set required app name (allowed characters: a-z, A-Z, 0-9, -, _, and space)
+//   appName: 'Thesis Bookings Service Logger',
+//   serverUrl: 'http://localhost:8200'
+// });
 
+const newrelic = require('newrelic');
 const express = require('express');
 const bodyParser = require('body-parser');
 const aws = require('aws-sdk');
@@ -28,7 +29,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 // Add the Elastic APM middleware after your regular middleware
-app.use(apm.middleware.express());
+// app.use(apm.middleware.express());
 
 app.get('/', (req, res) => {
   res.send('Thesis Bookings API');
@@ -50,12 +51,25 @@ app.get('/bookings/availability/:listing_uuid', (req, res) => {
 
 });
 
+// get availability with calendar tables for a specific listing
+app.get('/bookings/get_availability_with_calendar_table/:listing_uuid', (req, res) => {
+  // input is a listing id
+  let listing_uuid = req.params.listing_uuid;
+
+  Booking.get_availability_with_calendar_table(listing_uuid)
+    .then((results) => {
+      res.send(results);
+    })
+    .catch(() => {
+      console.error('Cannot get availability for listing');
+    });
+
+});
+
 // create a booking for a specific listing
 app.post('/bookings/book/:listing_uuid', (req, res) => {
 
   let listing_uuid = req.params.listing_uuid;
-
-  console.log(req.body);
 
   Booking.create_booking(listing_uuid, req.body)
   .then(() => {
@@ -68,6 +82,25 @@ app.post('/bookings/book/:listing_uuid', (req, res) => {
 
 
 });
+
+// create a booking with calendar table for a specific listing
+app.post('/bookings/book_with_calendar_table/:listing_uuid', (req, res) => {
+
+  let listing_uuid = req.params.listing_uuid;
+
+  Booking.create_booking_with_calendar_table(listing_uuid, req.body)
+  .then(() => {
+    let obj = {isBooked: true};
+    res.send(obj);
+  }).catch(() => {
+    let obj = {isBooked: false};
+    res.send(obj);
+  });
+
+
+});
+
+
 
 // SQS msg bus to Events Service
 
