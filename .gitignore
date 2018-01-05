@@ -8,6 +8,7 @@ data/*/*.csv
 config/*
 !config/sample-config.js
 
+newrelic.js
 
 # OS X
 .DS_Store
