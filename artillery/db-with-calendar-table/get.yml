@@ -1,0 +1,15 @@
+config:
+  target: 'http://localhost:3000'
+  phases:  
+    - duration: 30
+      arrivalRate: 100
+      name: "Max Load"
+  processor: "./get-random-availability.js"
+  defaults:
+    headers:
+scenarios:
+  - name: "Get availability for a listing"
+    flow:
+    - function: "getRandomListing"
+    - get:
+        url: "/bookings/get_availability_with_calendar_table/{{ listing_uuid }}"
