@@ -150,4 +150,8 @@ sequelize.sync();
 
 
 module.exports.Booking = Booking;
+module.exports.Calendar_2018 = Calendar_2018;
+module.exports.Calendar_2019 = Calendar_2019;
+module.exports.Calendar_2020 = Calendar_2020;
+module.exports.Calendar_2021 = Calendar_2021;
 module.exports.Op = Op;
