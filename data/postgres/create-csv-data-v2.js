@@ -49,12 +49,18 @@ console.time('create-listings-csv');
     let listing_uuid = chance.guid();
     let pa_rating = getRandomInt(0,6);
     listings_array.push([listing_uuid, pa_rating]);
-    let listing_string = `${listing_uuid}\r\n`;
+
+    let availability_array = new Array(366);
+
+    availability_array[availability_array.length-1] = listing_uuid;
+
+    let listing_string = availability_array.join(',') + `\r\n`;
     listings_wstream.write(listing_string);
   }
 
   listings_wstream.end(() => {
-    console.log('Bookings data has been created!');
+    console.log('Blank Listings data for calendars has been created!');
+    console.timeEnd('create-listings-csv');
   });
 
   // generate 1mil user_uuids
@@ -112,9 +118,9 @@ console.time('create-listings-csv');
     for (let k = 0; k < bookings_array.length; k++) {
       let booking_uuid = bookings_array[k].booking_uuid;
       let booking_start_date = bookings_array[k].booking_start_date;
-      let index = daysBetween(new Date('2018-01-01'), new Date(booking_start_date)) + 1;
+      let index = daysBetween(new Date('2018-01-01'), new Date(booking_start_date));
       let booking_length = bookings_array[k].booking_length;
-      for (let l = index - 1; l <= index + booking_length; l++) {
+      for (let l = index; l < index + booking_length; l++) {
         // console.log(l);
         availability_array[l] = booking_uuid;
       }
@@ -130,7 +136,7 @@ console.time('create-listings-csv');
   });
   availability_for_2018_wstream.end(() => {
     console.log('Availabilty for 2018 data has been created!');
-    console.time('create-availability-for-2018-csv');
+    console.timeEnd('create-availability-for-2018-csv');
   });
 }
 
